@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>New York Times Search</h1>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Search Parameters</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="search">Search Term</label>
+                                <input type="text" class="form-control" placeholder="Search Term" id="searchTerm">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sell">Number of records to retrieve</label>
+                                <select class="form-control" id="numRecords">
+                                    <option value="1">1</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="10">10</option>
+
+                                </select>
+                            </div>
+                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="startYear">Star Year</label>
+                        <input type="text" class="form-control" id="startYear" placeholder="Start-Year">
+                    </div>
+                    <div class="form-group">
+                        <label for="endYear">End Year</label>
+                        <input type="text" class="form-control" id="endYear" placeholder="End-Year">
+                    </div>
+                    <button type="submit" class="btn btn-default" id="searchBTN">Search</button>
+                    <button type="button" class="btn btn-default" id="clear">Clear</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- search parameters panel -->
+
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Search Results</h3>
+                </div>
+                <div class="panel-body" id="wellSection">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+
+
+    <script>
+
+        // setup variables
+        var queryTerm = "";
+        var numResults = 0;
+        var startYear = 0;
+        var endYear = 0;
+        var articleCounter = 0;
+        var authKey = "458de29b61c9441ebbb303e975bd0f3e";
+
+        var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=458de29b61c9441ebbb303e975bd0f3e";
+
+        function runQuery(numArticles, queryURL) {
+
+            $.ajax({ url: queryURL, method: 'GET' })
+                .done(function (NYTData) {
+                    console.log(NYTData);
+
+                    for (var i = 0; i < NYTData.response.docs.length; i++) {
+                        console.log(NYTData.response.docs[i].headline.main);
+                    }
+                    var wellSection = $("<div>");
+                    wellSection.addClass("well");
+                    wellSection.attr('id', 'articleWell-' + i);
+                    $("#wellSection").append(wellSection);
+
+                    // attach content to appropriate well
+                    $("#wellSection-" + i).append("<h3>" + NYTData.response.docs[i].headline.main + "</h3>");
+                    $("#wellSection-" + i).append("<h5" + NYTData.response.docs[i].section_name + "</h5>");
+                    $("#wellSection-" + i).append("<h5" + NYTData.response.docs[i].pub_date + "</h5>");
+                    $("#wellSection-" + i).append("<h5" + NYTData.response.docs[i].byline.original + "</h5>");
+                    $("#wellSection-" + i).append("<a href=" + NYTData.response.docs[i].web_url + ">" + "</h5>");
+                    console.log("123" + NYTData.response.docs[i].headline.main);
+                })
+        };
+
+
+        // functions
+
+        // main processes
+        $("#searchBTN").on("click", function (e) {
+            e.preventDefault();
+            // add in search term
+            var queryTerm = $('#searchTerm').val().trim();
+            console.log(queryTerm);
+
+            var newURL = queryURL + "&q=" + queryTerm;
+            console.log(newURL)
+
+            // get the number of records
+            numResults = $("#numRecords").val();
+
+            // get the start year and end year
+            startYear = $('#startYear').val().trim();
+            endYear = $('#endYear').val().trim();
+
+            if (parseInt(startYear)) {
+                startYear = startYear + "0101";
+
+                // add the date information to the url
+                newURL = newURL + "&begin_date" + startYear;
+            }
+
+            if (parseInt(endYear)) {
+                endYear = endYear + "0101";
+                newURL = newURL + "&end_date" + endYear;
+
+            }
+
+            console.log(newURL);
+
+            // send the ajax call the newly assembled URL
+            runQuery(numResults, newURL);
+
+
+        });
+
+        $("#clear").on("click", function () {
+            $("#wellSection").html("");
+        });
+
+//1. REtrieve user inputs and convert to variables
+// 2. use those variables to run an AJAX call to the NYT
+// 3. break down the NYT object into useable fields
+// 4. dynamically generate html content
+// 5. deal with edge cases -- buges or situation counter intuitive
+
+
+
+    </script>
+</body>
+
+</html>
