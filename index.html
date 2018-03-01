@@ -90,7 +90,7 @@
         var endYear = 0;
         var articleCounter = 0;
         var authKey = "458de29b61c9441ebbb303e975bd0f3e";
-
+        var numRecords = $("#numRecords").val()
         var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=458de29b61c9441ebbb303e975bd0f3e";
 
         function runQuery(numArticles, queryURL) {
@@ -101,6 +101,7 @@
 
                     for (var i = 0; i < NYTData.response.docs.length; i++) {
                         console.log(NYTData.response.docs[i].headline.main);
+                        
                     
                     var wellSection = $("<div>");
                     wellSection.addClass("well");
